@@ -2,9 +2,13 @@
 
 ## 面向对象
 
-### 什么是面向过程
+### 什么是面向过程（Java）
 
-funcition ….
+### 核心要素
+
++ 数据结构：原生类型、对象类型、数组类型、集合类型
++ 方法调用：访问性、返回类型、方法参数、异常等
++ 执行流程：赋值、逻辑、迭代（循环）、递归等
 
 ### 什么是面向对象
 
@@ -15,6 +19,82 @@ Class -> Object
 + 封装
 + 继承
 + 多态
+
+### 面向对象设计模式
+
++ GoF23 : 构建、结构、行为
++ 方法设计：名称、访问性、参数、返回类型
++ 泛型设计：类级别、方法级别
++ 异常设计：层次性、传播性
+
+#### 方法设计
+
++ 单元：一个类或一组类（**组件**）
+
+  + 类采用名词结构
+    + 动词过去式 + 名词
+      + `ContextRefreshedEvent`
+    +  动词ing + 名词
+      + `InitializingBean`
+    + 形容词+名词
+      + `ConfigurableApplicationContext`
+
++ 执行：某个方法
+
+  + 方法命名：动词
+
+    + execute
+    + fallback
+    + init
+    + run
+    + refresh
++ 方法参数：名词
+  
+  
+#### 异常设计
+
++ 根（顶层）异常：
+  
+  + `Throwable`
+      + checked类型：`Exception`
+         + unchecked类型: `RuntimeException`
+      + 不常见: `Error`
+  
+  + since java1.4  `java.lang.StackTraceElement`
+  
+    + 添加异常原因(cause)
+    
+      + 反模式：吞掉某个异常
+    
+      + 性能：注意 `fillInStackTrace()` 方法的开销，避免异常栈调用深度
+    
+        + 方法一：JVM参数控制栈深度（物理屏蔽）
+    
+          > 一劳永逸，不用改代码
+    
+        + 方法二：logback日志框架控制堆栈输出深度（逻辑屏蔽）
+    
+  ```java
+   public Throwable() {
+          fillInStackTrace();
+   }
+   public Throwable(String message) {
+          fillInStackTrace();
+          detailMessage = message;
+   }
+  ```
+  
+  > 通过`fillInStackTrace()`方法可以将异常信息打出来
+  
+  设计系统和代码前要充分考虑性能和安全问题
+
+#### 泛型设计（>=java5）
+
+Java泛型属于编译时处理，运行时擦写
+
+> 为什么要进行运行时擦写，因为运行时泛型对应的类型不确定，所以需要将泛型擦写为Object
+
+
 
 ### 面向对象五大原则
 
@@ -66,6 +146,149 @@ Liskov替换原则是关于继承机制的设计原则，==违反了Liskov替换
 
 ### TODO 《**OOD启思录**》
 
+## Java函数式编程
+
+### Java函数式基础
+
+#### 面向函数编程（Since Java 8 ）
+
++ Lambda表达式
++ 默认方法
++ 方法引用
+
+#### 匿名内置类
+
+通俗理解：没有名称的内部类
+
+Java8以前
+
++ 使用场景：
+
+  > Java 作为⼀⻔⾯向对象的**静态语⾔**，其封装性能够**屏蔽数据结构的细节**，从⽽更加关注模块的功能
+  > 性。其静态性也确保了 Java 强类型的特性。随着模块功能的提升，伴随⽽来的是复杂度的增加，代
+  > 码的语义清晰依赖于开发⼈员抽象和命名类或⽅法的能⼒。尽管编程思想和设计模式能够促使编程
+  > ⻛格趋于统⼀，然⽽⼤多数业务系统属于⾯向过程的⽅式，这与⾯向对象编程在⼀定程度上存在⼀
+  > 些冲突。Java 编程语⾔为了解决这个问题，引⼊了匿名内置类的⽅案。
+
+  + Java是面向对象的，但不是完全面向对象，因为Java存在原生类型
+  + Java是静态语言，编译成字节码后执行
+  + Java的封装性能屏蔽数据结构的细节
+
++ 典型场景
+
+  + Java Event/Listener
+
+  + Java Concurent
+
+  + Spring Template
+
+    ```java
+    JdbcTemplate.query(sql,new RowMapper(){
+     ...
+    })
+    ```
+
++  基本特性
+
+  + 无名称类
+
+  + 声明位置
+
+    + static block 
+
+      ```java
+      static{
+         ... 
+      }
+      ```
+
+    + 实例block
+
+      ```java
+      {
+          ...
+      }
+      ```
+
+    + 方法
+
+      + 类方法
+      + 实例方法
+
+    + 构造器
+
+  + 并非特殊的类结构
+
+    + 类名称：${package}  .${declared_Class}.${num}.class
+
+  + 基于多态，多数基于接口编程
+
+  + 允许多个抽象方法
+
++ 编程局限
+
+  + 代码臃肿
+  + 强类型约束
+  + 接口方法升级，匿名内部类也需要升级
+
+#### Lambda表达式
+
++ 基本特点
+
+  + 流程编排清晰
+  + 函数类型编程（非强类型）
+  + 改善代码臃肿
+  + 兼容接口升级
+
++ 实现方式
+
+  + `@FunctionalInterface`接口
+  + Lambda语法
+  + 方法引用
+  + 接口default方法实现
+
++ 编程局限
+
+  + 单一抽象方法
+  + Lambda调试困难
+  + Stream API操作有限
+
+  ```java
+      @FunctionalInterface
+      public interface Action {
+          void execute();
+      }
+  
+      public static void main(String[] args) {
+          Action action = () -> {
+              System.out.println("Hello World!");
+          };
+          // 匿名内置类写法
+          PropertyChangeListener listener = new PropertyChangeListener() {
+              @Override
+              public void propertyChange(PropertyChangeEvent evt) {
+                  print(evt);
+              }
+          };
+          // Lambda表达式传统写法
+          PropertyChangeListener listener1 = (event) -> {
+              print(event);
+          };
+          // Lambda 简略写法
+          PropertyChangeListener listener2 = LambdaDemo::print;
+      }
+  
+      private static void print(Object object) {
+          System.out.println(object.toString());
+      }
+  ```
+
+#### 总结
+
+1. 所有的函数式接口都引用一段执行代码
+2. 函数式接口没有固定的类型，固定模式（ SCFP = Supplier + Consumer + Function + Predicate） + Action
+3. 利用方法引用来实现模式匹配
+
 
 
 ## 基础知识
@@ -89,3 +312,20 @@ Liskov替换原则是关于继承机制的设计原则，==违反了Liskov替换
 
 #### 逻辑运算
 
+### 基本数据类型
+
++ byte (8)
++ char(16)
++ short(16)
++ int(32)
++ long(64)
++ float(32)
++ double(64)
++ boolean
+
+### 方法访问性
+
++ public : all
++ protected : 继承+同包
++ (default) : 同包
++ private : 私有只给当前类访问，不给外界访问
