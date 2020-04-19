@@ -50,7 +50,6 @@ Class -> Object
     + refresh
 + 方法参数：名词
   
-  
 #### 异常设计
 
 + 根（顶层）异常：
@@ -312,6 +311,8 @@ Java8以前
 
 #### 逻辑运算
 
+
+
 ### 基本数据类型
 
 + byte (8)
@@ -326,6 +327,51 @@ Java8以前
 ### 方法访问性
 
 + public : all
-+ protected : 继承+同包
++ protected : 继承 + 同包
 + (default) : 同包
 + private : 私有只给当前类访问，不给外界访问
+
+### 浅拷贝与深拷贝
+
++ 深浅针对对象类型
+
++ 浅拷贝指的对象还是原有对象中的对象，而没有生成新的对象
+
++ 深拷贝产生的对象中包含的属性对象是新生成的
+
++ clone的代价要比new 要小
+
+### ==内部类的原理==TODO
+
+### 线程安全的前提
+
+**讨论线程安全的前提是有无读写并存的场景**，如果是只读场景必然是线程安全的
+
+### final类是不是不能有抽象方法
+
+不是的，枚举本质上是final类，但是可以有抽象方法；但是枚举定义的抽象方法需要枚举成员去实现抽象方法。
+
+### ==序列化与反序列化的作用== TODO
+
+### 什么是字节码提升
+
+字节码提升是通过字节码操作，**修改类的定义**，达到辅助类一些操作（AOP）
+
+### ==泛型通配符的理解== TODO
+
+`List<? extends Number> producer, List<? super Number> consumer`
+
+extends  和super 分别有什么含义，分别在什么场景下使用
+
+**refer to Effective Java** 
+
+> **PECS stands for producer-extends, consumer-super**
+>
+> + 读取数据（生产者）使用 extends
+> + 操作输出（消费者）使用 super
+
+### Arrays.asList有猫腻
+
+返回的ArrayList返回的是Arrays类中的内部类，不支持add操作，但可以通过set方法调整集合中的元素
+
+### ==HashMap中红黑树的原理TODO==
