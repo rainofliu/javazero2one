@@ -23,9 +23,9 @@
   >         implements Map<K,V>, Serializable {
   > 	  // 包装的Map
   > 	  private final Map<K,V> m;     // Backing Map
-  >       // 被锁的对象 
+  >       // 被锁的对象
   >       final Object   mutex;        // Object on which to synchronize
-  > 
+  >
   >       SynchronizedMap(Map<K,V> m) {
   >             this.m = Objects.requireNonNull(m);
   >             mutex = this;
@@ -45,7 +45,7 @@
   >         public V get(Object key) {
   >             synchronized (mutex) {return m.get(key);}
   >         }
-  > 
+  >
   >         public V put(K key, V value) {
   >             synchronized (mutex) {return m.put(key, value);}
   >         }
@@ -91,7 +91,7 @@ public interface Map<K,V> {
         int hashCode();
         ...
     }
-    
+
     boolean equals(Object o);
     int hashCode();
     // since jdk1.8 获取默认的value，如果通过key成功获取到value，且value不为空，则返回获取的value；
@@ -138,7 +138,7 @@ transient Set<Map.Entry<K,V>> entrySet;
 
 // bin node 节点
 static class Node<K,V> implements Map.Entry<K,V> {
-    
+
 // 红黑树的节点
 static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {    
 ```
@@ -163,7 +163,7 @@ static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
         // 设置扩容的门槛
         this.threshold = tableSizeFor(initialCapacity);
   }
-	
+
     /**
      ** 永远接近于2的幂次方
      ** 比如你给定初始化大小 19，实际上初始化大小为 32，为 2 的 5 次方。
@@ -251,7 +251,7 @@ static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
         public final K getKey()        { return key; }
         public final V getValue()      { return value; }
         public final String toString() { return key + "=" + value; }
-		
+
         public final int hashCode() {
             // Objects.hashCode(key) 防止空指针
             // key hash值 和value hash值 进行“与运算”
@@ -294,7 +294,7 @@ static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
             super(hash, key, val, next);
         }
 
-       
+
         //找到红黑树的根节点，根据根节点没有父节点来判断
         final TreeNode<K,V> root() {
             for (TreeNode<K,V> r = this, p;;) {
@@ -404,7 +404,7 @@ static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
-   
+
 ```
 
 ### hash算法（包含寻址算法的介绍）
@@ -458,11 +458,11 @@ static final int hash(Object key) {
    key: 键
    value : 值
    onlyIfAbsent：false 表示即使 key 已经存在了，仍然会用新值覆盖原来的值，默认为 false
- */ 
+ */
 final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
-        Node<K,V>[] tab; 
-     	Node<K,V> p; 
+        Node<K,V>[] tab;
+     	Node<K,V> p;
         int n, i; // n: 数组长度   i：数组的下标
         // 数组为空，需要resize方法初始化
         if ((tab = table) == null || (n = tab.length) == 0)
@@ -514,7 +514,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
             if (e != null) { // existing mapping for key
                 // 获取旧的value
                 V oldValue = e.value;
-                // 当 onlyIfAbsent 为 false 时，才会覆盖值 
+                // 当 onlyIfAbsent 为 false 时，才会覆盖值
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 // Callbacks to allow LinkedHashMap post-actions
@@ -544,7 +544,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 final Node<K,V>[] resize() {
         // 旧的数组
         Node<K,V>[] oldTab = table;
-        // 旧数组的容量 
+        // 旧数组的容量
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         // 旧数组扩容门槛
         int oldThr = threshold;
@@ -557,14 +557,14 @@ final Node<K,V>[] resize() {
                 // 返回旧数组
                 return oldTab;
             }
-            // 设置新数组容量为原数组容量的2倍 
+            // 设置新数组容量为原数组容量的2倍
             // 如果新数组容量介于最大值和最小值之间，成功扩容设置新数组扩容门槛
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
                 // 设置新数组扩容门槛
                 newThr = oldThr << 1; // double threshold
         }
-    	
+
         else if (oldThr > 0) // initial capacity was placed in threshold
             // 新数组容量
             newCap = oldThr;
@@ -573,7 +573,7 @@ final Node<K,V>[] resize() {
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
-    
+
         if (newThr == 0) {
             float ft = (float)newCap * loadFactor;
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
@@ -581,7 +581,7 @@ final Node<K,V>[] resize() {
         }
         // 设置threshold
         threshold = newThr;
-    	
+
         @SuppressWarnings({"rawtypes","unchecked"})
             // 创建新数组
             Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
@@ -619,9 +619,9 @@ final Node<K,V>[] resize() {
                                 else
                                     loTail.next = e;
                                 loTail = e;
-                            } 
+                            }
                             // (e.hash & oldCap) != 0 表示新值链表
-                            else { 
+                            else {
                                 if (hiTail == null)
                                     hiHead = e;
                                 else
@@ -681,7 +681,7 @@ final Node<K,V> getNode(int hash, Object key) {
             if ((e = first.next) != null) { // 找链表元素
                 if (first instanceof TreeNode) // 红黑树
                     return ((TreeNode<K,V>)first).getTreeNode(hash, key);
-                do { 
+                do {
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         return e;
