@@ -2,9 +2,11 @@
 
 ## 1. String为什么用final修饰
 
-这样设计的原因是什么
++ final类不让继承
++ final属性引用变量不让修改
++ value没有任何写操作
 
-## 2. String中的value真的不可变吗？
+## 2. String中的value真的不可变吗？（反射）
 
 不是的，从Java 5开始，我们可以通过反射来修改String对象中value的值
 
